@@ -14,6 +14,7 @@
 #import "PdBase.h"
 #import "AudioHelpers.h"
 #include "ringbuffer.h"
+#include "m_pd.h"
 
 static const AudioUnitElement kRemoteIOElement_Input = 1;
 static const AudioUnitElement kRemoteIOElement_Output = 0;
@@ -231,6 +232,11 @@ static OSStatus audioRenderCallback(void *inRefCon,
                                     UInt32 inBusNumber,
                                     UInt32 inNumberFrames,
                                     AudioBufferList *ioData) {
+
+	// NOTE(robin): This is because using libpd in Swift doesn't
+	// seem to initialise pd_this on the audio thread but
+	// pd_this is required in the routine that reads/writes audio
+	if (!pd_this) pd_this = &pd_maininstance;
 
 	PdAudioUnit *pd = (__bridge PdAudioUnit *)inRefCon;
 	Float32 *auBuffer = (Float32 *)ioData->mBuffers[0].mData;

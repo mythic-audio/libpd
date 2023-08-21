@@ -38,6 +38,7 @@
 #endif
 
 ring_buffer *rb_create(int size) {
+  if (size == 0) return NULL;
   if (size & 0xff) return NULL;  // size must be a multiple of 256
   ring_buffer *buffer = malloc(sizeof(ring_buffer));
   if (!buffer) return NULL;

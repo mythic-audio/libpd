@@ -267,7 +267,10 @@ static OSStatus audioRenderCallback(void *inRefCon,
 		}
 
 		// audio unit -> input ring buffer
-		UInt32 framesAvailable = (UInt32)rb_available_to_read(pd->_inputRingBuffer) / pd->_inputFrameSize;
+		UInt32 framesAvailable = 0;
+		if (pd->_inputEnabled && pd->_inputFrameSize > 0) {
+			framesAvailable = (UInt32)rb_available_to_read(pd->_inputRingBuffer) / pd->_inputFrameSize;
+		}
 		while (inputFrames + framesAvailable < outputFrames) {
 			// pad input buffer to make sure we have enough blocks to fill auBuffer,
 			// this should hopefully only happen when the audio unit is started
